@@ -1,0 +1,117 @@
+namespace org.coffeescm
+
+asset Contract identified by contractId {
+  o String contractId
+  o DateTime createdDateTime
+  o Boolean active default = true
+  --> Batch batch
+  --> Grower grower 
+  --> FarmInspector farmInspector optional
+  --> Shipper shipper optional
+  --> Processor processor optional
+}
+
+asset Batch identified by batchId {
+  // Create Batch
+  o String batchId
+  o BatchStatus status default = "GROWING"
+  // Inspect Batch
+  o String typeOfSeed optional
+  o String coffeeFamily optional
+  o String[] fertilizersUsed optional
+  // Harvest Batch
+  o DateTime harvestedDateTime optional
+  // Ship Batch
+  o String warehouseName optional
+  o String warehouseAddress optional
+  o Double shippingQuantity optional
+  o String shipId optional
+  o String shipName optional
+  o DateTime estimatedDateTime optional
+  // Process Batch
+  o DateTime packagingDateTime optional
+  o Double packagedCount optional
+  o Double temperature optional
+  o Double roastingTime optional
+  --> Contract contract
+ }
+
+enum BatchStatus {
+  o GROWING
+  o INSPECTION
+  o HARVESTED
+  o SHIPPING
+  o PROCESSING
+}
+
+abstract participant SCMUser identified by userId{
+  o String userId
+  o String name
+  o String email
+  o Integer contact 
+  o Address address
+}
+
+concept Address {
+  o String country
+  o Double latitude optional
+  o Double longitude optional
+}
+
+participant Grower extends SCMUser{
+  o String role default = 'GROWER'
+}
+
+participant FarmInspector extends SCMUser {
+  o String role default = 'FARMINSPECTOR'
+}
+
+participant Shipper extends SCMUser {
+  o String role default = 'SHIPPER'
+}
+
+participant Processor extends SCMUser {
+  o String role default = 'PROCESSOR'
+}
+  
+transaction CreateContract {
+  o String contractId
+  o String batchId
+  --> Grower grower
+}
+  
+transaction AddContractParticipants {
+  --> Contract currentContract
+  --> FarmInspector farmInspector optional
+  --> Shipper shipper optional
+  --> Processor processor optional
+}
+
+transaction InspectBatch {
+  o String typeOfSeed 
+  o String coffeeFamily
+  o String[] fertilizersUsed
+  --> Contract currentContract
+}
+  
+transaction Harvest {
+  --> Contract currentContract
+}
+
+transaction ShipBatch {
+  o String warehouseName
+  o String warehouseAddress
+  o Double shippingQuantity
+  o String shipId
+  o String shipName optional
+  o DateTime estimatedDateTime
+  --> Contract currentContract
+}
+  
+transaction ProcessBatch {
+  o DateTime packagingDateTime
+  o Double packagedCount
+  o Double temperature
+  o Double roastingTime
+  --> Contract currentContract
+}

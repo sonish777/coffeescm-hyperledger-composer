@@ -1,0 +1,137 @@
+rule ParticipantCannotViewOtherParticipants {
+  description: "Participants cannot view others"
+  participant(p): "org.coffeescm.*"
+  operation: ALL
+  resource(r): "org.hyperledger.composer.system.Participant"
+  condition: (p.getIdentifier() != r.getIdentifier())
+  action: DENY
+}
+
+rule GrowerCannotViewOthersContracts {
+  description: "Participants cannot view others contracts"
+  participant(p): "org.coffeescm.Grower"
+  operation: READ
+  resource(r): "org.coffeescm.Contract"
+  condition: ((r.grower == null) || (p.getIdentifier() !== r.grower.getIdentifier()))
+  action: DENY
+  
+}
+
+rule FarmInspectorCannotViewOthersContracts {
+  description: "Participants cannot view others contracts"
+  participant(p): "org.coffeescm.FarmInspector"
+  operation: READ
+  resource(r): "org.coffeescm.Contract"
+  condition: ((r.farmInspector == null) || (p.getIdentifier() !== r.farmInspector.getIdentifier()))
+  action: DENY
+}
+
+rule ShipperCannotViewOthersContracts {
+  description: "Participants cannot view others contracts"
+  participant(p): "org.coffeescm.Shipper"
+  operation: READ
+  resource(r): "org.coffeescm.Contract"
+  condition: ((r.shipper == null) || (p.getIdentifier() !== r.shipper.getIdentifier()))
+  action: DENY
+}
+
+rule ProcessorCannotViewOthersContracts {
+  description: "Participants cannot view others contracts"
+  participant(p): "org.coffeescm.Processor"
+  operation: READ
+  resource(r): "org.coffeescm.Contract"
+  condition: ((r.processor == null) || (p.getIdentifier() !== r.processor.getIdentifier()))
+  action: DENY
+}
+
+rule ParticipantsCannotAlterContract {
+  description: "Participants cannot create, update or delete contracts"
+  participant: "org.coffeescm.*"
+  operation: CREATE, UPDATE, DELETE
+  resource: "org.coffeescm.Contract"
+  action: DENY
+}
+
+rule GrowerCannotViewOthersBatches {
+  description: "Grower cannot view others batches"
+  participant(p): "org.coffeescm.Grower"
+  operation: READ
+  resource(r): "org.coffeescm.Batch"
+  condition: ((r.contract.grower == null) || (p.getIdentifier() !== r.contract.grower.getIdentifier()))
+  action: DENY
+}
+
+rule FarmInspectorCannotViewOthersBatches {
+  description: "FarmInspector cannot view others batches"
+  participant(p): "org.coffeescm.FarmInspector"
+  operation: READ
+  resource(r): "org.coffeescm.Batch"
+  condition: ((r.contract.farmInspector == null) || (p.getIdentifier() !== r.contract.farmInspector.getIdentifier()))
+  action: DENY
+}
+
+rule ShipperCannotViewOthersBatches {
+  description: "Shipper cannot view others batches"
+  participant(p): "org.coffeescm.Shipper"
+  operation: READ
+  resource(r): "org.coffeescm.Batch"
+  condition: ((r.contract.shipper == null) || (p.getIdentifier() !== r.contract.shipper.getIdentifier()))
+  action: DENY
+}
+
+rule ProcessorCannotViewOthersBatches {
+  description: "Processor cannot view others batches"
+  participant(p): "org.coffeescm.Processor"
+  operation: READ
+  resource(r): "org.coffeescm.Batch"
+  condition: ((r.contract.processor == null) || (p.getIdentifier() !== r.contract.processor.getIdentifier()))
+  action: DENY
+}
+
+ rule ParticipantsCanUpdateBatch {
+  description: "Participants can update batch"
+  participant: "org.coffeescm.*"
+  operation: UPDATE
+  resource: "org.coffeescm.Batch"
+  action: ALLOW
+}
+
+rule ParticipantsCannotAlterBatch {
+  description: "Participants cannot create or delete batch"
+  participant: "org.coffeescm.*"
+  operation: CREATE, DELETE
+  resource: "org.coffeescm.Batch"
+  action: DENY
+}
+
+rule Default {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.coffeescm.*"
+  action: ALLOW
+}
+
+rule SystemACL {
+  description: "All access - grant everything to everybody"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+  description: "Grant business network administrators full access to user resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "**"
+  action: ALLOW
+}
+
+rule NetworkAdminSystem {
+  description: "Grant business network administrators full access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
